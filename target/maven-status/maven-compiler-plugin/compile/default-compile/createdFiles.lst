@@ -1,4 +1,3 @@
-com/example/tiktokcleaner/TikTokLinkChecker.class
-com/example/tiktokcleaner/Main.class
-com/example/tiktokcleaner/ChromeDriverManager.class
-com/example/tiktokcleaner/TikTokLinkExtractor.class
+com/example/tiktok/TikTokLinkCleaner$1.class
+com/example/tiktok/TikTokLinkCleaner.class
+com/example/tiktok/TikTokLinkCleaner$TikTokLink.class

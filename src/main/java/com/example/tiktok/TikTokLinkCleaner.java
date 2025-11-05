@@ -1,3 +1,4 @@
+package com.example.tiktok;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
