@@ -131,7 +131,7 @@ public class TikTokLinkCleaner extends Application {
             activeRequests.set(0);
             
             // Create a list to track futures for proper cleanup
-            List<Future<?>> futures = new ArrayList<>();
+            java.util.List<Future<?>> futures = new ArrayList<>();
             
             for (TikTokLink link : links) {
                 // Limit concurrent requests to prevent overwhelming the system
