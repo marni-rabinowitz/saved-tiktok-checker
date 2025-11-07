@@ -3,21 +3,52 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <!-- 
+    TikTok Link Cleaner - Memory Optimized Version 2.0
+    
+    Memory Optimization Features:
+    - Thread pool management to prevent thread leaks
+    - Efficient file reading with BufferedReader
+    - HTTP connection pooling and timeouts
+    - Proper resource cleanup on application shutdown
+    - G1 garbage collector for better memory management
+    - String deduplication for reduced memory footprint
+    
+    Build with: mvn clean compile
+    Run with: mvn javafx:run
+    -->
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
     <artifactId>tiktok-link-cleaner</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
+    <name>TikTok Link Cleaner - Memory Optimized</name>
+    <description>A JavaFX application to clean and validate TikTok saved links with memory optimizations</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <javafx.version>20</javafx.version>
+        <javafx.version>17.0.2</javafx.version>
         <httpclient5.version>5.2.1</httpclient5.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Central Repository</name>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
-        <!-- JavaFX dependencies -->
+        <!-- JavaFX dependencies - consistent version -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -34,30 +65,17 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- Apache HttpClient 5 -->
+        <!-- Apache HttpClient 5 for optimized HTTP requests -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>${httpclient5.version}</version>
         </dependency>
-
         <dependency>
-    <groupId>org.openjfx</groupId>
-    <artifactId>javafx-controls</artifactId>
-    <version>17</version> <!-- adjust for your JDK version -->
-</dependency>
-
-<dependency>
-    <groupId>org.openjfx</groupId>
-    <artifactId>javafx-fxml</artifactId>
-    <version>17</version>
-</dependency>
-
-                    <dependency>
-        <groupId>org.apache.httpcomponents.client5</groupId>
-        <artifactId>httpclient5-fluent</artifactId>
-        <version>5.2.1</version>
-    </dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5-fluent</artifactId>
+            <version>${httpclient5.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -72,7 +90,7 @@
                 </configuration>
             </plugin>
 
-            <!-- JavaFX plugin to run the app -->
+            <!-- JavaFX plugin to run the app with memory optimizations -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -86,6 +104,24 @@
                 </executions>
                 <configuration>
                     <mainClass>com.example.tiktok.TikTokLinkCleaner</mainClass>
+                    <!-- Memory optimization JVM arguments -->
+                    <jvmArgs>
+                        <jvmArg>-Xmx512m</jvmArg>
+                        <jvmArg>-XX:+UseG1GC</jvmArg>
+                        <jvmArg>-XX:MaxGCPauseMillis=200</jvmArg>
+                        <jvmArg>-XX:+UnlockExperimentalVMOptions</jvmArg>
+                        <jvmArg>-XX:+UseStringDeduplication</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Surefire plugin for memory-optimized testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <argLine>-Xmx256m -XX:+UseG1GC</argLine>
                 </configuration>
             </plugin>
         </plugins>
