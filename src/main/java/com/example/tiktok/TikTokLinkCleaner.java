@@ -18,12 +18,15 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
-import java.sql.Time;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TikTokLinkCleaner extends Application {
     private final ObservableList<TikTokLink> links = FXCollections.observableArrayList();
     private TableView<TikTokLink> table;
+    private ExecutorService executorService;
+    private final AtomicInteger activeRequests = new AtomicInteger(0);
 
     public static void main(String[] args) {
         launch(args);
@@ -31,7 +34,15 @@ public class TikTokLinkCleaner extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Initialize thread pool with limited threads to prevent resource exhaustion
+        executorService = Executors.newFixedThreadPool(5);
+        
         stage.setTitle("TikTok Saved Video Cleaner");
+        
+        // Properly handle application shutdown
+        stage.setOnCloseRequest(e -> {
+            shutdownExecutorService();
+        });
 
         Button loadBtn = new Button("Load Links");
         Button checkBtn = new Button("Check Links");
@@ -95,10 +106,18 @@ public class TikTokLinkCleaner extends Application {
         if (file == null) return;
 
         try {
+            // Clear existing links to prevent accumulation
             links.clear();
-            for (String line : Files.readAllLines(file.toPath())) {
-                String url = line.trim();
-                if (!url.isEmpty()) links.add(new TikTokLink(url));
+            
+            // Use try-with-resources to ensure proper resource cleanup
+            try (BufferedReader reader = Files.newBufferedReader(file.toPath())) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String url = line.trim();
+                    if (!url.isEmpty()) {
+                        links.add(new TikTokLink(url));
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,22 +125,47 @@ public class TikTokLinkCleaner extends Application {
     }
 
     private void checkLinks() {
-        for (TikTokLink link : links) {
-            new Thread(() -> {
-                try {
-                    int status = Request.get(link.url)
-                            .connectTimeout(Timeout.ofSeconds(5))
-                            .execute()
-                            .returnResponse()
-                            .getCode();
-
-                    link.status = (status == 200) ? "✅ Exists" : "❌ Missing (" + status + ")";
-                } catch (Exception e) {
-                    link.status = "❌ Missing/Error";
+        // Cancel any existing requests before starting new ones
+        if (executorService != null && !executorService.isShutdown()) {
+            // Reset active request counter
+            activeRequests.set(0);
+            
+            // Create a list to track futures for proper cleanup
+            List<Future<?>> futures = new ArrayList<>();
+            
+            for (TikTokLink link : links) {
+                // Limit concurrent requests to prevent overwhelming the system
+                if (activeRequests.get() >= 10) {
+                    try {
+                        Thread.sleep(100); // Brief pause to allow some requests to complete
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
+                
+                Future<?> future = executorService.submit(() -> {
+                    activeRequests.incrementAndGet();
+                    try {
+                        int status = Request.get(link.url)
+                                .connectTimeout(Timeout.ofSeconds(5))
+                                .responseTimeout(Timeout.ofSeconds(10))
+                                .execute()
+                                .returnResponse()
+                                .getCode();
 
-                javafx.application.Platform.runLater(() -> table.refresh());
-            }).start();
+                        link.status = (status == 200) ? "✅ Exists" : "❌ Missing (" + status + ")";
+                    } catch (Exception e) {
+                        link.status = "❌ Missing/Error";
+                    } finally {
+                        activeRequests.decrementAndGet();
+                        // Update UI on JavaFX Application Thread
+                        javafx.application.Platform.runLater(() -> table.refresh());
+                    }
+                });
+                
+                futures.add(future);
+            }
         }
     }
 
@@ -142,6 +186,38 @@ public class TikTokLinkCleaner extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Properly shutdown the executor service to prevent resource leaks
+     */
+    private void shutdownExecutorService() {
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+            try {
+                // Wait for existing tasks to complete
+                if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                    // Force shutdown if tasks don't complete within timeout
+                    executorService.shutdownNow();
+                    // Wait a bit more for tasks to respond to being cancelled
+                    if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                        System.err.println("Executor did not terminate gracefully");
+                    }
+                }
+            } catch (InterruptedException e) {
+                // Re-interrupt the current thread if interrupted
+                Thread.currentThread().interrupt();
+                // Force shutdown
+                executorService.shutdownNow();
+            }
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // Ensure proper cleanup when application stops
+        shutdownExecutorService();
+        super.stop();
     }
 
     static class TikTokLink {
