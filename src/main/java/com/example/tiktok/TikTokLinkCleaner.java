@@ -20,10 +20,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
-import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.*;
 
 public class TikTokLinkCleaner extends Application {
     private final ObservableList<TikTokLink> links = FXCollections.observableArrayList();
