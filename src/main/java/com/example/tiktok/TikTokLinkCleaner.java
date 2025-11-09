@@ -85,23 +85,27 @@ public class TikTokLinkCleaner extends Application {
         stage.show();
     }
 
-    private void loadFile(Stage stage) {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Select TikTok Links File");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File file = fc.showOpenDialog(stage);
-        if (file == null) return;
+private void loadFile(Stage stage) {
+    FileChooser fc = new FileChooser();
+    fc.setTitle("Select TikTok Links File");
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+    File file = fc.showOpenDialog(stage);
+    if (file == null) return;
 
-        try {
-            links.clear();
-            for (String line : Files.readAllLines(file.toPath())) {
-                String url = line.trim();
-                if (!url.isEmpty()) links.add(new TikTokLink(url));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    try {
+        links.clear();
+        java.util.List<String> lines = Files.readAllLines(file.toPath());
+        // Reverse the lines so newest links are first
+        java.util.Collections.reverse(lines);
+
+        for (String line : lines) {
+            String url = line.trim();
+            if (!url.isEmpty()) links.add(new TikTokLink(url));
         }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 
 private void checkLinks() {
     // Limit how many threads run at once (e.g., 10 at a time)
