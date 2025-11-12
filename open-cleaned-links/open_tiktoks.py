@@ -2,7 +2,7 @@ import webbrowser
 
 # --- CONFIGURATION ---
 BATCH_SIZE = 10
-LINKS_FILE = "tiktoks_canonical.txt"
+LINKS_FILE = "tiktoks_cleaned.txt"
 # ----------------------
 
 def open_links_in_batches(file_path):
