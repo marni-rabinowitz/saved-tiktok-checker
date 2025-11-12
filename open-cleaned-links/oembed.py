@@ -1,33 +1,42 @@
 import requests
 import time
+import re
 
 INPUT_FILE = "tiktoks_dead.txt"
 OUTPUT_FILE = "tiktoks_cleaned.txt"
 
-# TikTok often blocks bots; realistic headers help avoid false 403s.
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
     ),
-    "Accept": "text/html"
+    "Accept": "application/json",
 }
 
-def tiktok_exists(url):
-    try:
-        # Use HEAD first (fast)
-        r = requests.head(url, headers=HEADERS, allow_redirects=True, timeout=8)
-        
-        # Some TikTok links need GET to verify properly
-        if r.status_code in (403, 404, 410, 451, 400):
-            # Try GET in case HEAD is misleading
-            r = requests.get(url, headers=HEADERS, allow_redirects=True, timeout=8)
+def normalize_tiktok_url(url: str) -> str:
+    """Convert tiktokv.com links to canonical tiktok.com format."""
+    match = re.search(r'/video/(\d+)', url)
+    if match:
+        video_id = match.group(1)
+        return f"https://www.tiktok.com/@_/video/{video_id}"
+    return url
 
-        # ✅ Video exists if TikTok redirects to a valid viewer page
-        if r.status_code == 200 and "Video currently unavailable" not in r.text:
+def tiktok_exists(video_url):
+    try:
+        normalized = normalize_tiktok_url(video_url)
+        r = requests.get(
+            "https://www.tiktok.com/oembed",
+            params={"url": normalized},
+            headers=HEADERS,
+            timeout=10,
+        )
+
+        if r.status_code == 200:
             return True
-        
-        return False
+        else:
+            # Uncomment next line if you want to see failed reason
+            # print(f"❌ {r.status_code} for {normalized}")
+            return False
 
     except Exception:
         return False
@@ -45,14 +54,10 @@ def main():
         exists = tiktok_exists(link)
         status = "✅ OK" if exists else "❌ Gone"
         print(f"[{i}/{total}] {status} – {link}")
-
         if exists:
             good_links.append(link)
+        time.sleep(0.3)
 
-        # Avoid hitting TikTok too fast
-        time.sleep(0.2)
-
-    # Write output file
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(good_links))
 
