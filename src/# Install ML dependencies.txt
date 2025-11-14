@@ -1,0 +1,8 @@
+# Install ML dependencies
+pip install -r requirements_ml.txt
+
+# Run the ML categorizer
+python categorize_tiktoks_ml.py
+
+# Compare with keyword-based method
+python compare_categorizers.py
