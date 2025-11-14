@@ -1,119 +1,85 @@
-# TikTok Link Cleaner
+# TikTok Link Tools
 
-A simple JavaFX desktop tool that cleans and simplifies TikTok URLs by removing unnecessary tracking parameters and resolving short links. Built with **Java 11**, **JavaFX**, and **Apache HttpClient 5**.
+This repository contains two Python utilities for working with large lists of TikTok video links:
 
----
-
-## 🚀 Features
-
-* Clean TikTok URLs by removing tracking or referral parameters
-* Resolve shortened TikTok links to their canonical form
-* Minimal, user-friendly JavaFX interface
-* Lightweight and portable (no database required)
+1. **filter_tiktoks_oembed.py** — Checks which TikTok links are still valid using TikTok’s oEmbed API and generates a cleaned list.
+2. **open_tiktoks.py** — Opens TikTok links in your browser in user-controlled batches for manual review.
 
 ---
 
-## 🧰 Tech Stack
+## 📌 Features
 
-* **Java** 11+
-* **JavaFX** (for the GUI)
-* **Apache HttpClient 5** (for HTTP requests)
-* **Maven** (for build and dependency management)
+### ✅ 1. Filter TikTok Links (Automatic Validation)
 
----
+`filter_tiktoks_oembed.py` reads a text file containing TikTok URLs and checks each one to determine whether it still exists.
 
-## 🗂️ Project Structure
+- Normalizes TikTok URL formats  
+- Uses TikTok's oEmbed endpoint  
+- Detects:  
+  - Working videos  
+  - Deleted videos  
+  - Private or restricted videos  
+  - Invalid URLs  
+- Outputs only valid links to a clean file  
+- Shows progress while scanning  
+- Includes a delay to avoid rate limits  
 
-```
-tiktok-link-cleaner/
-├── pom.xml
-└── src/
-    └── main/
-        ├── java/
-        │   └── com/example/tiktok/
-        │       └── TikTokLinkCleaner.java
-        └── resources/
-```
+**Default Input:** `tiktoks_dead.txt`  
+**Default Output:** `tiktoks_cleaned.txt`
 
 ---
 
-## ⚙️ Setup & Installation
+### 🔍 2. Open TikTok Links in Batches
 
-### Prerequisites
+`open_tiktoks.py` allows you to open large lists of TikTok links in batches without overwhelming your browser.
 
-* JDK 17 or newer
-* Maven 3.6+
-* Internet connection for dependency resolution
+- Opens links in groups (default: 5 at a time)  
+- Pauses between batches until you press Enter  
+- Useful for manual review or verification  
+- Configurable batch size and source file  
 
-### Setting Up Java 17 on Mac Locally
-* run brew install openjdk@17
-* run sudo ln -sfn $(brew --prefix openjdk@17)/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
-* run export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-* run export PATH=$JAVA_HOME/bin:$PATH
-
-### Steps
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/tiktok-link-cleaner.git
-   cd tiktok-link-cleaner
-   ```
-2. Build the project:
-
-   ```bash
-   mvn clean package
-   ```
-3. Run the application:
-
-   ```bash
-   mvn javafx:run
-   ```
+**Default Input:** `tiktoks.txt`
 
 ---
 
-## 🖥️ Usage
+## 📂 File Overview
 
-1. Launch the app.
-2. Paste a TikTok URL (e.g., a shortened or tracking URL).
-3. Click **“Clean”**.
-4. Copy or open the cleaned, simplified link directly.
+### `filter_tiktoks_oembed.py`
 
----
+This script:
 
-## 📦 Dependencies
+- Normalizes TikTok URLs  
+- Sends requests to TikTok’s oEmbed API  
+- Checks if each video exists  
+- Prints a status line for every link  
+- Saves all valid links to `tiktoks_cleaned.txt`  
 
-Defined in [`pom.xml`](pom.xml):
-
-* `org.openjfx:javafx-controls`
-* `org.openjfx:javafx-graphics`
-* `org.openjfx:javafx-base`
-* `org.apache.httpcomponents.client5:httpclient5`
-* `org.apache.httpcomponents.client5:httpclient5-fluent`
+Good for cleaning large datasets of TikTok links.
 
 ---
 
-## 🧑‍💻 Development Notes
+### `open_tiktoks.py`
 
-* Main class: `com.example.tiktok.TikTokLinkCleaner`
-* Built and tested with **JavaFX 20**
-* Compatible with **OpenJDK 11+**
+This tool:
 
----
+- Loads links from a text file  
+- Opens them in browser tabs in configurable batches  
+- Waits for user input between batches  
 
-## 📝 License
-
-This project is licensed under the [MIT License](LICENSE).
+Perfect for human review workflows.
 
 ---
 
-## ❤️ Acknowledgements
+## 🚀 Usage
 
-* [Apache HttpComponents](https://hc.apache.org/httpcomponents-client-5.2.x/)
-* [OpenJFX](https://openjfx.io/)
-* Inspired by the need to quickly clean TikTok share links for easier sharing.
+### 1. Install dependency
+```bash
+pip install requests
+python filter_tiktoks_oembed.py
+python open_tiktoks.py
 
----
+
+
 
 **Author:** Marni Rabinowitz
 **Version:** 1.0-SNAPSHOT
