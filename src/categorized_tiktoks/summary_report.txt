@@ -1,0 +1,39 @@
+============================================================
+TikTok Collection Summary Report
+============================================================
+
+📊 Overall Statistics:
+  Total Videos: 9001
+  Unique Authors: 7329
+  Unique Hashtags: 15995
+
+📁 Categories:
+  Uncategorized: 5335 videos (59.3%)
+  Tech: 1091 videos (12.1%)
+  Music: 796 videos (8.8%)
+  Comedy: 486 videos (5.4%)
+  DIY: 433 videos (4.8%)
+  Cooking: 424 videos (4.7%)
+  Pets: 407 videos (4.5%)
+  Fashion: 320 videos (3.6%)
+  Travel: 242 videos (2.7%)
+  Education: 195 videos (2.2%)
+  Fitness: 176 videos (2.0%)
+  Gaming: 155 videos (1.7%)
+  Dance: 147 videos (1.6%)
+  Beauty: 97 videos (1.1%)
+
+👤 Top 10 Authors:
+  1. @: 121 videos
+  2. Kristen In Minnesota: 27 videos
+  3. Justine Doiron: 19 videos
+  4. Aria Velz: 18 videos
+  5. sarah: 14 videos
+  6. emma: 11 videos
+  7. Avery: 11 videos
+  8. sam: 10 videos
+  9. katie: 10 videos
+  10. Eli Rallo: 9 videos
+
+#️⃣ Sample Hashtags (20 of 15995):
+  #00movies, #00s, #00semo, #00skid, #08, #1, #10, #1001, #100days2healthadmin, #100gecs, #100m, #100things, #10kartist, #10millionadoptions, #10minutemeals, #10secondsvs, #1111, #112, #13mos, #13themusical

@@ -1,67 +1,29 @@
-# TikTok Link Tools
+# TikTok Categorizer
 
-A comprehensive set of Python utilities for managing, validating, and organizing large collections of TikTok video links.
+Automatically organize your saved TikToks into categories based on content, authors, and hashtags.
 
-## 📌 Features
+## Features
 
-### ✅ 1. Validate TikTok Links (Automatic Validation)
+- ✅ **Validate TikTok links** - Check if videos still exist
+- 📊 **Extract metadata** - Get title, author, thumbnail, hashtags
+- 📁 **Auto-categorize** - Sort by content type (Cooking, Fitness, Comedy, etc.)
+- 👤 **Group by author** - See all videos from each creator
+- #️⃣ **Organize by hashtags** - Find videos with popular hashtags
+- 📄 **Generate reports** - Get statistics about your collection
 
-`filter_tiktoks_oembed.py` reads a text file containing TikTok URLs and checks each one to determine whether it still exists.
+## Usage
 
-- Normalizes TikTok URL formats
-- Uses TikTok's oEmbed endpoint
-- Detects working videos, deleted videos, private/restricted videos, and invalid URLs
-- Outputs only valid links to a clean file
-- Shows progress while scanning
-- Includes a delay to avoid rate limits
+### Step 1: Validate Your Links (Optional)
 
-**Default Input:** `tiktoks_dead.txt`  
-**Default Output:** `tiktoks_cleaned.txt`
-
-### 🔍 2. Open TikTok Links in Batches
-
-`open_tiktoks.py` allows you to open large lists of TikTok links in batches without overwhelming your browser.
-
-- Opens links in groups (default: 5 at a time)
-- Pauses between batches until you press Enter
-- Useful for manual review or verification
-- Configurable batch size and source file
-
-**Default Input:** `tiktoks.txt`
-
-### 📊 3. Categorize and Organize TikToks
-
-`categorize_tiktoks.py` automatically organizes your saved TikToks into categories based on content, authors, and hashtags.
-
-- Extract metadata (title, author, thumbnail, hashtags)
-- Auto-categorize by content type (Cooking, Fitness, Comedy, etc.)
-- Group by author to see all videos from each creator
-- Organize by hashtags to find videos with popular tags
-- Generate detailed statistics about your collection
-
----
-
-## 🚀 Usage
-
-### Step 1: Install Dependencies
+If you haven't already cleaned your links, run the validation script first:
 
 ```bash
-pip install requests
-```
-
-### Step 2: Validate Your Links
-
-Clean your TikTok links to remove deleted or private videos:
-
-```bash
-python filter_tiktoks_oembed.py
+python oembed.py
 ```
 
 This creates `tiktoks_cleaned.txt` with only valid links.
 
-### Step 3: Categorize Your TikToks (Optional)
-
-Organize your validated links into categories:
+### Step 2: Categorize Your TikToks
 
 ```bash
 python categorize_tiktoks.py
@@ -72,33 +34,7 @@ This will:
 2. Automatically categorize videos
 3. Create organized folders with your videos
 
-### Step 4: Batch Open Links for Review (Optional)
-
-Manually review your TikToks in batches:
-
-```bash
-python open_tiktoks.py
-```
-
----
-
-## 📂 File Overview
-
-### `filter_tiktoks_oembed.py`
-
-This script normalizes TikTok URLs, sends requests to TikTok's oEmbed API, checks if each video exists, prints a status line for every link, and saves all valid links to `tiktoks_cleaned.txt`. Good for cleaning large datasets of TikTok links.
-
-### `open_tiktoks.py`
-
-This tool loads links from a text file, opens them in browser tabs in configurable batches, and waits for user input between batches. Perfect for human review workflows.
-
-### `categorize_tiktoks.py`
-
-This script fetches metadata for each TikTok, automatically categorizes videos based on content keywords, and organizes them into structured folders by category, author, and hashtag.
-
----
-
-## 📁 Output Structure (After Categorization)
+## Output Structure
 
 ```
 categorized_tiktoks/
@@ -128,9 +64,7 @@ categorized_tiktoks/
 └── tiktok_metadata.json     # Full metadata for all videos
 ```
 
----
-
-## 🏷️ Category Keywords
+## Category Keywords
 
 Videos are automatically categorized based on these keywords in their titles:
 
@@ -148,9 +82,7 @@ Videos are automatically categorized based on these keywords in their titles:
 - **Education**: learn, education, tutorial, howto, lesson, teach
 - **Gaming**: game, gaming, gamer, gameplay, stream
 
----
-
-## ⚙️ Customization
+## Customization
 
 ### Add Your Own Categories
 
@@ -166,7 +98,7 @@ CATEGORY_KEYWORDS = {
 
 ### Change Input/Output Files
 
-Modify these variables at the top of the scripts:
+Modify these variables at the top of the script:
 
 ```python
 INPUT_FILE = "tiktoks_cleaned.txt"  # Your input file
@@ -174,19 +106,20 @@ OUTPUT_DIR = "categorized_tiktoks"  # Where to save organized videos
 METADATA_FILE = "tiktok_metadata.json"  # Metadata file name
 ```
 
----
+## Requirements
 
-## 💡 Tips
+```bash
+pip install requests
+```
 
-1. **Rate Limiting**: The scripts wait between requests to avoid being rate-limited
-2. **Large Collections**: For 100+ videos, categorization may take several minutes
+## Tips
+
+1. **Rate Limiting**: The script waits 0.5 seconds between requests to avoid being rate-limited
+2. **Large Collections**: For 100+ videos, this may take several minutes
 3. **Metadata File**: The JSON file contains all metadata and can be used for custom analysis
 4. **Multiple Categories**: Videos can belong to multiple categories if they match multiple keywords
-5. **Batch Size**: Adjust the batch size in `open_tiktoks.py` based on your browser's capabilities
 
----
-
-## 📋 Example Output (Categorization)
+## Example Output
 
 ```
 🎬 Loaded 150 TikTok links
@@ -195,7 +128,7 @@ METADATA_FILE = "tiktok_metadata.json"  # Metadata file name
 [1/150] Processing: https://www.tiktok.com/@user/video/123...
   ✅ Title: Easy 5-Minute Pasta Recipe #cooking #recipe
   👤 Author: @chefmike
-  📂 Categories: Cooking
+  📁 Categories: Cooking
 
 ...
 
@@ -213,34 +146,27 @@ METADATA_FILE = "tiktok_metadata.json"  # Metadata file name
 ✨ Done! Check the 'categorized_tiktoks' folder for organized videos.
 ```
 
----
-
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### "❌ Error: tiktoks_cleaned.txt not found!"
-Run `filter_tiktoks_oembed.py` first to create the cleaned links file.
+Run `oembed.py` first to create the cleaned links file.
 
 ### "❌ Failed to fetch" errors
 Some videos may be private or deleted. The script will continue with the rest.
 
 ### Slow performance
-The scripts respect rate limits. For large collections, consider:
+The script respects rate limits. For large collections, consider:
 - Running in batches
 - Increasing `time.sleep()` value if you get rate limited
 
----
+## Files in This Directory
 
-## 📦 Files in This Repository
-
-- `filter_tiktoks_oembed.py` - Validation script using oEmbed API
-- `open_tiktoks.py` - Batch browser opening tool
-- `categorize_tiktoks.py` - Enhanced categorization script
+- `oembed.py` - Original validation script
+- `categorize_tiktoks.py` - **New!** Enhanced categorization script
 - `tiktoks.txt` - Your original TikTok links
-- `tiktoks_cleaned.txt` - Validated links (created by filter script)
+- `tiktoks_cleaned.txt` - Validated links (created by oembed.py)
 - `tiktoks_dead.txt` - Links that no longer work
 
----
-
-## 📄 License
+## License
 
 Free to use and modify for personal projects.

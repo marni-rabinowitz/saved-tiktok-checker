@@ -1,0 +1,14 @@
+# Requirements for ML TikTok Categorizer
+
+# Core dependencies
+requests>=2.31.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+numpy>=1.24.0
+
+# Natural Language Processing
+nltk>=3.8.0
+
+# Optional: For faster processing
+# pandas>=2.0.0
